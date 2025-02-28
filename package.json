@@ -6,11 +6,12 @@
     "build": "tsc",
     "start:prod": "node ./dist/server.js",
     "start:dev": "ts-node-dev --respawn --transpile-only ./src/server.ts",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
     "prettier": "prettier --ignore-path .gitignore --write \"./src/**/*.+(js|ts|json)\"",
     "prettier:fix": "prettier --write src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier . --write"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +24,13 @@
     "mongoose": "^8.11.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@types/eslint__js": "^8.42.3",
     "@types/express": "^5.0.0",
-    "typescript": "^5.7.3"
+    "eslint": "^9.14.0",
+    "globals": "^16.0.0",
+    "prettier": "^3.5.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.25.0"
   }
 }
