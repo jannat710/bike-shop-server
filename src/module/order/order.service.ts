@@ -1,3 +1,5 @@
+import { StatusCodes } from 'http-status-codes';
+import AppError from '../../helpers/AppError';
 import Product from '../product/product.model';
 import { IOrder } from './order.interface';
 import Order from './order.model';
@@ -6,7 +8,7 @@ import Order from './order.model';
 const createOrder = async (orderData: IOrder): Promise<IOrder> => {
   const product = await Product.findById(orderData.product);
   if (!product || product.quantity < orderData.quantity) {
-    throw new Error('Insufficient stock');
+    throw new AppError(StatusCodes.NOT_FOUND, 'Insufficient stock');
   }
 
   const totalPrice = product.price * orderData.quantity;

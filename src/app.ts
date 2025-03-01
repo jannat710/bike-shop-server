@@ -3,6 +3,7 @@ import productRouter from './module/product/product.router';
 import orderRouter from './module/order/order.router';
 import userRouter from './module/user/user.router';
 import { globalErrorHandler } from './middlewares/globalErrorHandler';
+import { StatusCodes } from 'http-status-codes';
 
 const app: Application = express();
 
@@ -17,5 +18,13 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use(globalErrorHandler);
+
+//Not Found Route
+app.use('*', (req: Request, res: Response) => {
+  res.status(StatusCodes.NOT_FOUND).json({
+    success: false,
+    message: 'API Not Found',
+  });
+});
 
 export default app;
