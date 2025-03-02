@@ -1,45 +1,29 @@
-import { Request, Response } from 'express';
 import { orderService } from './order.service';
+import catchAsync from '../../utils/catchAsync';
+import { StatusCodes } from 'http-status-codes';
+import sendResponse from '../../utils/sendResponse';
 
-const createOrder = async (req: Request, res: Response) => {
-  try {
-    const orderData = req.body;
+const createOrder = catchAsync(async (req, res) => {
+  const orderData = req.body;
 
-    const result = await orderService.createOrder(orderData);
+  const result = await orderService.createOrder(orderData);
+  sendResponse(res, {
+    statusCode: StatusCodes.CREATED,
+    message: 'Order created successfully',
+    data: result,
+  });
+});
 
-    res.status(200).json({
-      message: 'Order created successfully',
-      success: true,
-      data: result,
-    });
-  } catch (err) {
-    res.status(500).json({
-      message: 'Validation failed',
-      success: false,
-      error: err,
-    });
-  }
-};
-
-const calculateRevenue = async (req: Request, res: Response) => {
-  try {
-    const totalRevenue = await orderService.calculateRevenue();
-
-    res.status(200).json({
-      message: 'Revenue calculated successfully',
-      success: true,
-      data: {
-        totalRevenue: totalRevenue,
-      },
-    });
-  } catch (err) {
-    res.status(500).json({
-      message: 'Error calculating revenue',
-      success: false,
-      error: err,
-    });
-  }
-};
+const calculateRevenue = catchAsync(async (req, res) => {
+  const totalRevenue = await orderService.calculateRevenue();
+  sendResponse(res, {
+    statusCode: StatusCodes.CREATED,
+    message: 'Revenue calculated successfully',
+    data: {
+      totalRevenue: totalRevenue,
+    },
+  });
+});
 
 export const orderController = {
   createOrder,
