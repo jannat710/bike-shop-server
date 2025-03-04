@@ -24,6 +24,7 @@ const userSchema = new Schema<IUser>(
     password: {
       type: String,
       required: true,
+      select: false,
     },
     needsPasswordChange: {
       type: Boolean,
@@ -58,6 +59,11 @@ userSchema.pre('save', async function (next) {
     user.password,
     Number(config.bcrypt_salt_rounds),
   );
+  next();
+});
+
+userSchema.post('save', function (doc, next) {
+  doc.password = '';
   next();
 });
 

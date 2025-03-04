@@ -10,23 +10,34 @@ const register = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: StatusCodes.CREATED,
     status: true,
-    message: 'Customer is registered successfully',
-    data: result,
+    message: 'User is registered successfully',
+    data: {
+      id: result._id,
+      name: result.name,
+      email: result.email,
+      userStatus: result.userStatus,
+      role: result.role,
+    },
   });
 });
-// const login = catchAsync(async (req: Request, res: Response) => {
-//   const result = await AuthService.login(req.body);
+const login = catchAsync(async (req: Request, res: Response) => {
+  const result = await AuthService.login(req.body);
 
-//   sendResponse(res, {
-//     statusCode: StatusCodes.ACCEPTED,
-//     status: true,
-//     message: 'User logged in successfully',
-//     token: result?.token,
-//     data: result?.user,
-//   });
-// });
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: true,
+    message: 'User logged in successfully',
+    token: result?.token,
+    data: {
+      name: result?.user?.name,
+      email: result?.user?.email,
+      role: result?.user?.role,
+      userStatus: result?.user?.userStatus,
+    },
+  });
+});
 
 export const AuthControllers = {
   register,
-  //   login,
+  login,
 };
