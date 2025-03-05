@@ -5,7 +5,7 @@ import catchAsync from '../../utils/catchAsync';
 
 const createUser = catchAsync(async (req, res) => {
   const payload = req.body;
-
+  //payload.role = 'admin';
   const result = await userService.createUser(payload);
 
   sendResponse(res, {
@@ -26,7 +26,6 @@ const getUser = catchAsync(async (req, res) => {
 });
 
 const getSingleUser = catchAsync(async (req, res) => {
-  console.log(req.params);
   const userId = req.params.userId;
 
   const result = await userService.getSingleUser(userId);

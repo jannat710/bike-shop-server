@@ -22,12 +22,11 @@ const register = catchAsync(async (req: Request, res: Response) => {
 });
 const login = catchAsync(async (req: Request, res: Response) => {
   const result = await AuthService.login(req.body);
-
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     status: true,
     message: 'User logged in successfully',
-    token: result?.token,
+    token: result?.token ?? 'No Token Generated',
     data: {
       name: result?.user?.name,
       email: result?.user?.email,
