@@ -4,6 +4,7 @@ import AppError from '../../helpers/AppError';
 import { StatusCodes } from 'http-status-codes';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import sendMail from '../../utils/sendEmail';
 
 const register = async (payload: IUser) => {
   const result = await User.create(payload);
@@ -43,7 +44,34 @@ const login = async (payload: { email: string; password: string }) => {
   return { token, user };
 };
 
+const forgetPassword = async (payload: { email: string }) => {
+  const user = await User.findOne({
+    email: payload.email,
+  });
+
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'User not found!');
+  }
+
+  if (user?.userStatus === 'inactive') {
+    throw new AppError(StatusCodes.FORBIDDEN, 'User is blocked!');
+  }
+
+  const jwtPayload = {
+    email: user?.email,
+    role: user?.role,
+  };
+
+  const token = jwt.sign(jwtPayload, 'secret', { expiresIn: '1h' });
+
+  const resetLink = `http://localhost:5173/reset-password?_id=${user?._id}&token=${token}`;
+
+  console.log(resetLink);
+  await sendMail(user?.email, 'Reset password link', resetLink);
+};
+
 export const AuthService = {
   register,
   login,
+  forgetPassword,
 };
