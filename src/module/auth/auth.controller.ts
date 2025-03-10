@@ -37,13 +37,13 @@ const login = catchAsync(async (req: Request, res: Response) => {
 });
 
 const forgetPassword = catchAsync(async (req: Request, res: Response) => {
-  const result = await AuthService.forgetPassword(req.body);
+  await AuthService.forgetPassword(req.body);
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     status: true,
     message: 'Password reset link sent to your email',
-    data: result,
+    data: null,
   });
 });
 

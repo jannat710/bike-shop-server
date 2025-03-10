@@ -6,8 +6,8 @@ const sendMail = async (to: string, subject: string, html: string) => {
     port: 587,
     secure: false,
     auth: {
-      user: 'jannatul0040@gmail.com',
-      pass: 'jbfq pxyj qwsh cjal',
+      user: 'jntjannat99@gmail.com',
+      pass: 'ifrf rosv gzzh nacs',
     },
   });
 
