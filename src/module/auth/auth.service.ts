@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import User from '../user/user.model';
 import { IUser } from '../user/user.interface';
 import AppError from '../../helpers/AppError';
@@ -5,6 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import sendMail from '../../utils/sendEmail';
+import config from '../../app/config';
 
 const register = async (payload: IUser) => {
   const result = await User.create(payload);
@@ -62,7 +64,7 @@ const forgetPassword = async (payload: { email: string }) => {
     role: user?.role,
   };
 
-  const token = jwt.sign(jwtPayload, 'secret', { expiresIn: '1h' });
+  const token = jwt.sign(jwtPayload, 'secret', { expiresIn: '30d' });
 
   const resetLink = `http://localhost:5173/reset-password?_id=${user?._id}&token=${token}`;
 
@@ -70,8 +72,43 @@ const forgetPassword = async (payload: { email: string }) => {
   await sendMail(user?.email, 'Reset password link', resetLink);
 };
 
+const resetPassword = async (payload: {
+  id: string;
+  token: string;
+  password: string;
+}) => {
+  const user = await User.findById(payload?.id);
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'User not found!');
+  }
+
+  if (user?.userStatus === 'inactive') {
+    throw new AppError(StatusCodes.FORBIDDEN, 'User is blocked!');
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  jwt.verify(payload.token, 'secret', (err, decoded) => {
+    if (err) {
+      throw new AppError(StatusCodes.UNAUTHORIZED, 'Invalid or expired token');
+    }
+  });
+  payload.password = await bcrypt.hash(
+    payload.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+
+  user.password = payload.password;
+
+  console.log(user?.password);
+
+  const result = await User.findByIdAndUpdate(user?.id, user, { new: true });
+
+  return result;
+};
+
 export const AuthService = {
   register,
   login,
   forgetPassword,
+  resetPassword,
 };

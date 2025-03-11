@@ -7,7 +7,7 @@ const sendMail = async (to: string, subject: string, html: string) => {
     secure: false,
     auth: {
       user: 'jntjannat99@gmail.com',
-      pass: 'ifrf rosv gzzh nacs',
+      pass: 'uqqx wbup htdv ofsm',
     },
   });
 
