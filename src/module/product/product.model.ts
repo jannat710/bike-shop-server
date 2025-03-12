@@ -8,6 +8,7 @@ const productSchema = new Schema<IProduct>({
     trim: true,
     maxlength: [50, 'Name cannot be more than 50 characters'],
   },
+  images: { type: String },
   brand: {
     type: String,
     required: [true, 'Brand is required'],
