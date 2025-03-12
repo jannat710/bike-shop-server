@@ -2,11 +2,20 @@ import { productService } from './product.service';
 import { StatusCodes } from 'http-status-codes';
 import sendResponse from '../../utils/sendResponse';
 import catchAsync from '../../utils/catchAsync';
+import { uploadToCloudinary } from '../../helpers/fileUploadHelper';
 
 // Create a Bike
 
 const createProduct = catchAsync(async (req, res) => {
-  const productData = req.body;
+  const productData = JSON.parse(req.body.data);
+  if (req.file) {
+    const imageName = 'Bike';
+    const path = req.file.path;
+    const { secure_url } = await uploadToCloudinary(imageName, path);
+    productData.images = secure_url;
+    console.log(secure_url);
+  }
+
   const result = await productService.createProduct(productData);
   sendResponse(res, {
     statusCode: StatusCodes.CREATED,
@@ -15,26 +24,6 @@ const createProduct = catchAsync(async (req, res) => {
   });
 });
 
-//Get All Bikes
-// const getProduct = catchAsync(async (req, res) => {
-//   const { searchTerm } = req.query;
-//   let filter = {};
-//   if (searchTerm) {
-//     filter = {
-//       $or: [
-//         { name: { $regex: searchTerm, $options: 'i' } },
-//         { brand: { $regex: searchTerm, $options: 'i' } },
-//         { category: { $regex: searchTerm, $options: 'i' } },
-//       ],
-//     };
-//   }
-//   const result = await productService.getProduct(filter);
-//   sendResponse(res, {
-//     statusCode: StatusCodes.OK,
-//     message: 'Bike retrieved successfully',
-//     data: result,
-//   });
-// });
 const getProduct = catchAsync(async (req, res) => {
   const result = await productService.getProduct(req.query);
 
