@@ -1,4 +1,6 @@
 import express, { Application, Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import productRouter from './module/product/product.router';
 import orderRouter from './module/order/order.router';
 import userRouter from './module/user/user.router';
@@ -9,6 +11,8 @@ import authRouter from './module/auth/auth.route';
 const app: Application = express();
 
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 
 app.use('/api', productRouter);
 app.use('/api', orderRouter);

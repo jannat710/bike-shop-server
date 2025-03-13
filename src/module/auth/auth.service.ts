@@ -41,7 +41,9 @@ const login = async (payload: { email: string; password: string }) => {
     role: user?.role,
   };
 
-  const token = jwt.sign(jwtPayload, 'secret', { expiresIn: '30d' });
+  const token = jwt.sign(jwtPayload, config.jwt_access_secret as string, {
+    expiresIn: '30d',
+  });
 
   return { token, user };
 };
@@ -64,7 +66,9 @@ const forgetPassword = async (payload: { email: string }) => {
     role: user?.role,
   };
 
-  const token = jwt.sign(jwtPayload, 'secret', { expiresIn: '30d' });
+  const token = jwt.sign(jwtPayload, config.jwt_access_secret as string, {
+    expiresIn: '30d',
+  });
 
   const resetLink = `http://localhost:5173/reset-password?_id=${user?._id}&token=${token}`;
 
@@ -86,12 +90,19 @@ const resetPassword = async (payload: {
     throw new AppError(StatusCodes.FORBIDDEN, 'User is blocked!');
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  jwt.verify(payload.token, 'secret', (err, decoded) => {
-    if (err) {
-      throw new AppError(StatusCodes.UNAUTHORIZED, 'Invalid or expired token');
-    }
-  });
+  jwt.verify(
+    payload.token,
+    config.jwt_access_secret as string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (err, decoded) => {
+      if (err) {
+        throw new AppError(
+          StatusCodes.UNAUTHORIZED,
+          'Invalid or expired token',
+        );
+      }
+    },
+  );
   payload.password = await bcrypt.hash(
     payload.password,
     Number(config.bcrypt_salt_rounds),

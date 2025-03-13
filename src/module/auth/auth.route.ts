@@ -16,6 +16,7 @@ authRouter.post(
   validateRequest(AuthValidation.loginValidationSchema),
   AuthControllers.login,
 );
+
 authRouter.post(
   '/forget-password',
   validateRequest(AuthValidation.forgetPasswordValidationSchema),
